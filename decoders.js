@@ -134,7 +134,7 @@ var videoDecode = function (file, type) {
                         var hadprogress = 0;
 
                         decoder.on('progress', function (progress) {
-                            var progress = parseInt(progress.percent);
+                            progress = parseInt(progress.percent);
                             if ((progress != hadprogress) && progress % 5 == 0) {
                                 console.log(`video file "${path.parse(file).base}" processing ${size.name} ${progress}'% done`);
                                 hadprogress = progress;
