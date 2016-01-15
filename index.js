@@ -1,29 +1,47 @@
 var watch = require('nodewatch');
-var mediainfo = require("mediainfo-q");
 var config = require('./config');
+var async = require('async');
+var mime = require('mime');
+var path = require('path');
 var fs = require('fs');
-var todofolder = "./media/todo";
+
+const todofolder = "./media/todo";
 const donefolder = "./media/done";
+
+var createfolder = function (folder) {
+    if (!fs.existsSync(folder)) {
+        fs.mkdirSync(folder);
+    }
+};
 
 //create not existing possible destination folders
 config.types.forEach(function (type) {
-    if (!fs.existsSync(donefolder)) {
-        fs.mkdirSync(donefolder);
-    }
+    createfolder(todofolder);
+    createfolder(donefolder);
+
     var possibledesttype = `${donefolder}/${type.type}/`;
-    if (!fs.existsSync(possibledesttype)) {
-        fs.mkdirSync(possibledesttype);
-    }
+    createfolder(possibledesttype);
+
+    var originalfolder = `${donefolder}/${type.type}/orig/`;
+    createfolder(originalfolder);
+
     if (type.sizes) {
         type.sizes.forEach(function (size) {
             var possibledest = `${donefolder}/${type.type}/${size.name}/`;
-
-            if (!fs.existsSync(possibledest)) {
-                fs.mkdirSync(possibledest);
-            }
+            createfolder(possibledest);
         });
     }
 });
+
+
+var q = async.queue(function (task, cb) {
+    task.type.decoder(task.file, task.type).then(function () {
+        fs.rename(task.file, `./media/done/${task.type.type}/orig/${path.parse(task.file).base}`);
+        cb();
+    }).catch(function (e) {
+        console.error(e);
+    });
+}, 4);
 
 
 //start folder watcher
@@ -32,21 +50,17 @@ watch.add(todofolder).onChange(function (file, prev, curr, action) {
     console.log(action, file);
 
     if (action === "new" || action === "change") {
-        mediainfo(file).then(function (info) {
 
-            //if type is known
-            if (info[0].tracks[0].type) {
-                var filetype = info[0].tracks[0].type.toLowerCase();
+        //if type is known
+        var filetype = mime.lookup(file).split('/')[0];
 
-                config.types.forEach(function (type) {
-                    if (type.type === filetype) {
-                        type.decoder(file, info[0].tracks[0], type);
-                    }
+        config.types.forEach(function (type) {
+            if (type.type === filetype) {
+                q.push({type: type, file: file}, function (err) {
+                    if (err) console.error(err);
                 });
-
-            } else {
-                console.error("type unknown")
             }
         });
     }
 });
+
