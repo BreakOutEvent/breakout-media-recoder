@@ -49,8 +49,7 @@ watch.add(todofolder).onChange(function (file, prev, curr, action) {
 
     console.log(action, file);
 
-    if (action === "new" || action === "change") {
-
+    if (action === "new") {
         //if type is known
         var filetype = mime.lookup(file).split('/')[0];
 
