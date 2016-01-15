@@ -121,6 +121,8 @@ var videoDecode = function (file, type) {
         getSize(file).then(function (thissize) {
             var promises = [];
 
+            //create video thumbnail in do-folder
+            ffmpeg(file).outputOptions(['-ss 00:00:01.000', '-vframes 1']).output(`./media/todo/${path.parse(file).name}.jpg`).run();
 
             type.sizes.forEach(function (size) {
                 promises.push(new Promise(function (resolve, reject) {
