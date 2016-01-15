@@ -15,11 +15,9 @@ var createfolder = function (folder) {
 };
 
 //create not existing possible destination folders
+createfolder(todofolder);
+createfolder(donefolder);
 config.types.forEach(function (type) {
-    createfolder(todofolder);
-    createfolder(`./media/done/audio/waveform/`);
-    createfolder(donefolder);
-
     var possibledesttype = `${donefolder}/${type.type}/`;
     createfolder(possibledesttype);
 
@@ -33,6 +31,7 @@ config.types.forEach(function (type) {
         });
     }
 });
+createfolder(`./media/done/audio/waveform/`);
 
 
 var q = async.queue(function (task, cb) {
