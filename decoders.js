@@ -50,13 +50,34 @@ var imageDecode = function (file, mediainfo, type) {
 
 var audioDecode = function (file, mediainfo, type) {
     type.sizes.forEach(function (size) {
-        console.log("HERE: ", size.name);
-
         var output = `./media/done/${type.type}/${size.name}/${path.parse(file).name}.mp3`;
-        var decoder = ffmpeg(file).audioCodec('libmp3lame').audioBitrate(size.quality).audioChannels(2).audioFrequency(44100).output(output);
+        var decoder = ffmpeg(file).audioCodec('libmp3lame').audioBitrate(size.bitrate).audioChannels(2).audioFrequency(44100).output(output);
 
         decoder.on('end', function () {
-            console.log(`audio file "${path.parse(file).base}" converted to ${size.quality}kbit/s`);
+            console.log(`audio file "${path.parse(file).base}" converted to ${size.bitrate}kbit/s`);
+        });
+
+        decoder.on('error', function (err, stdout, stderr) {
+            console.error(err);
+        });
+
+        decoder.run();
+
+    });
+};
+
+var videoDecode = function (file, mediainfo, type) {
+    type.sizes.forEach(function (size) {
+
+        var output = `./media/done/${type.type}/${size.name}/${path.parse(file).name}.webm`;
+        var decoder = ffmpeg(file).videoCodec('libvpx-vp9').size(`${size.side}x?`).audioCodec('libvorbis').audioBitrate(size.audiobitrate).audioChannels(2).audioFrequency(44100).videoBitrate(size.videobitrate).outputOptions(['-cpu-used 2', '-threads 2']).output(output);
+
+        decoder.on('progress', function (progress) {
+            console.log(`video file "${path.parse(file).base}" processing ${size.name} ${parseInt(progress.percent)}'% done`);
+        });
+
+        decoder.on('end', function () {
+            console.log(`video file "${path.parse(file).base}" converted to ${size.videobitrate}kbit/s`);
         });
 
         decoder.on('error', function (err, stdout, stderr) {
@@ -70,5 +91,6 @@ var audioDecode = function (file, mediainfo, type) {
 
 module.exports = {
     imageDecode: imageDecode,
-    audioDecode: audioDecode
+    audioDecode: audioDecode,
+    videoDecode: videoDecode
 };

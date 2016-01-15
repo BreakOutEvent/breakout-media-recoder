@@ -13,15 +13,22 @@ var config = {
             ]
         },
         {
-            type: "video"
+            type: "video",
+            decoder: decoders.videoDecode,
+            sizes: [
+                {name: "low", side: 480, videobitrate: 1200, audiobitrate: 92},
+                {name: "medium", side: 720, videobitrate: 2200, audiobitrate: 128},
+                {name: "hd", side: 1280, videobitrate: 4200, audiobitrate: 192},
+                {name: "fullhd", side: 1920, videobitrate: 6200, audiobitrate: 192}
+            ]
         },
         {
             type: "audio",
             decoder: decoders.audioDecode,
             sizes: [
-                {name: "low", quality: 48},
-                {name: "medium", quality: 92},
-                {name: "high", quality: 192}
+                {name: "low", bitrate: 48},
+                {name: "medium", bitrate: 92},
+                {name: "high", bitrate: 192}
             ]
         }
     ]
