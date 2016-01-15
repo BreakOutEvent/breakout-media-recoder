@@ -25,26 +25,30 @@ config.types.forEach(function (type) {
     }
 });
 
+
+//start folder watcher
 watch.add(todofolder).onChange(function (file, prev, curr, action) {
 
-
     console.log(action, file);
-    mediainfo(file).then(function (res) {
 
-        //if type is known
-        if (res[0].tracks[0].type) {
-            var filetype = res[0].tracks[0].type.toLowerCase();
+    if (action === "new" || action === "changed") {
+        mediainfo(file).then(function (info) {
 
-            config.types.forEach(function (type) {
-                if (type.type === filetype) {
-                    type.decoder(file, type);
-                }
-            });
+            //if type is known
+            if (info[0].tracks[0].type) {
+                var filetype = info[0].tracks[0].type.toLowerCase();
 
-        } else {
-            console.error("type unknown")
-        }
+                config.types.forEach(function (type) {
+                    if (type.type === filetype) {
+                        type.decoder(file, info[0].tracks[0], type);
+                    }
+                });
 
-        //ffmpeg(file).videoCodec('libx264').videoBitrate(8000).fps(30).output(`./media/done/${path.parse(file).name}.avi`).run();
-    });
+            } else {
+                console.error("type unknown")
+            }
+
+            //ffmpeg(file).videoCodec('libx264').videoBitrate(8000).fps(30).output(`./media/done/${path.parse(file).name}.avi`).run();
+        });
+    }
 });
