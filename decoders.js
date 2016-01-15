@@ -42,7 +42,7 @@ var imageDecode = function (file, mediainfo, type) {
             quality: size.quality
         }, function (err, stdout, stderr) {
             if (err) console.error(err);
-            console.log(`image resized ${path.parse(file).base} to fit within ${size.side}px`);
+            console.log(`image file "${path.parse(file).base}" resized to fit within ${size.side}px`);
         });
     });
 };
@@ -55,12 +55,8 @@ var audioDecode = function (file, mediainfo, type) {
         var output = `./media/done/${type.type}/${size.name}/${path.parse(file).name}.mp3`;
         var decoder = ffmpeg(file).audioCodec('libmp3lame').audioBitrate(size.quality).audioChannels(2).audioFrequency(44100).output(output);
 
-        decoder.on('start', function (commandLine) {
-            console.log(`Spawned Ffmpeg with command: ${commandLine}`);
-        });
-
         decoder.on('end', function () {
-            console.log(`audio file ${path.parse(file).base} converted to ${size.quality}kbit/s`);
+            console.log(`audio file "${path.parse(file).base}" converted to ${size.quality}kbit/s`);
         });
 
         decoder.on('error', function (err, stdout, stderr) {

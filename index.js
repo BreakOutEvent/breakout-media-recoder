@@ -34,8 +34,6 @@ watch.add(todofolder).onChange(function (file, prev, curr, action) {
     if (action === "new" || action === "change") {
         mediainfo(file).then(function (info) {
 
-            //console.log("mediainfo-track: ", info[0].tracks[0]);
-
             //if type is known
             if (info[0].tracks[0].type) {
                 var filetype = info[0].tracks[0].type.toLowerCase();
