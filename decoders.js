@@ -88,7 +88,16 @@ var audioDecode = function (file, type) {
 
             decoder.on('end', function () {
                 console.log(`audio file "${path.parse(file).base}" converted to ${size.bitrate}kbit/s`);
-                if (size.bitrate >= 192) {
+
+                //waveform from max bitrate
+                var maxbitrate = 0;
+                type.sizes.forEach(function (size) {
+                    if (size.bitrate > maxbitrate) {
+                        maxbitrate = size.bitrate;
+                    }
+                });
+
+                if (size.bitrate == maxbitrate) {
                     audioWaveform(output);
                 }
                 resolve();
@@ -164,7 +173,6 @@ var videoDecode = function (file, type) {
 //sudo apt-get install libgroove-dev libpng12-dev zlib1g-dev
 var audioWaveform = function (file) {
     return new Promise(function (resolve, reject) {
-        console.log("create waveform");
         var output = `./media/done/audio/waveform/${path.parse(file).name}.png`;
         waveform(file, {
             png: output,
