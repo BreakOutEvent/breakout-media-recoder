@@ -2,6 +2,7 @@ var ffmpeg = require('fluent-ffmpeg');
 var im = require('imagemagick');
 var path = require('path');
 var mediainfo = require("mediainfo-q");
+var waveform = require('waveform');
 
 var getSize = function (file) {
     return new Promise(function (resolve, reject) {
@@ -87,6 +88,9 @@ var audioDecode = function (file, type) {
 
             decoder.on('end', function () {
                 console.log(`audio file "${path.parse(file).base}" converted to ${size.bitrate}kbit/s`);
+                if (size.bitrate >= 192) {
+                    audioWaveform(output);
+                }
                 resolve();
             });
 
@@ -120,7 +124,7 @@ var videoDecode = function (file, type) {
 
                         decoder.on('progress', function (progress) {
                             var progress = parseInt(progress.percent);
-                            if (progress != hadprogress) {
+                            if ((progress != hadprogress) && progress % 5 == 0) {
                                 console.log(`video file "${path.parse(file).base}" processing ${size.name} ${progress}'% done`);
                                 hadprogress = progress;
                             }
@@ -156,8 +160,33 @@ var videoDecode = function (file, type) {
     });
 };
 
+//https://github.com/andrewrk/waveform
+//sudo apt-get install libgroove-dev libpng12-dev zlib1g-dev
+var audioWaveform = function (file) {
+    return new Promise(function (resolve, reject) {
+        console.log("create waveform");
+        var output = `./media/done/audio/waveform/${path.parse(file).name}.png`;
+        waveform(file, {
+            png: output,
+            'png-width': 500,
+            'png-height': 200,
+            'png-color-bg': '00000000',
+            'png-color-center': '4c4c4cff',
+            'png-color-outer': '000000ff'
+        }, function (err) {
+            if (err) {
+                console.error(err);
+                reject();
+            }
+            console.log(`created waveform ${output}`);
+            resolve();
+        });
+    });
+};
+
 module.exports = {
     imageDecode: imageDecode,
     audioDecode: audioDecode,
-    videoDecode: videoDecode
+    videoDecode: videoDecode,
+    audioWaveform: audioWaveform
 };

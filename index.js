@@ -17,6 +17,7 @@ var createfolder = function (folder) {
 //create not existing possible destination folders
 config.types.forEach(function (type) {
     createfolder(todofolder);
+    createfolder(`./media/done/audio/waveform/`);
     createfolder(donefolder);
 
     var possibledesttype = `${donefolder}/${type.type}/`;
@@ -36,7 +37,9 @@ config.types.forEach(function (type) {
 
 var q = async.queue(function (task, cb) {
     task.type.decoder(task.file, task.type).then(function () {
-        fs.rename(task.file, `./media/done/${task.type.type}/orig/${path.parse(task.file).base}`);
+        fs.rename(task.file, `./media/done/${task.type.type}/orig/${path.parse(task.file).base}`, function (err) {
+            if (err) console.error(err);
+        });
         cb();
     }).catch(function (e) {
         console.error(e);
