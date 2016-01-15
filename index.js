@@ -7,13 +7,13 @@ const donefolder = "./media/done";
 
 //create not existing possible destination folders
 config.types.forEach(function (type) {
-
+    if (!fs.existsSync(donefolder)) {
+        fs.mkdirSync(donefolder);
+    }
     var possibledesttype = `${donefolder}/${type.type}/`;
-
     if (!fs.existsSync(possibledesttype)) {
         fs.mkdirSync(possibledesttype);
     }
-
     if (type.sizes) {
         type.sizes.forEach(function (size) {
             var possibledest = `${donefolder}/${type.type}/${size.name}/`;
@@ -31,8 +31,10 @@ watch.add(todofolder).onChange(function (file, prev, curr, action) {
 
     console.log(action, file);
 
-    if (action === "new" || action === "changed") {
+    if (action === "new" || action === "change") {
         mediainfo(file).then(function (info) {
+
+            //console.log("mediainfo-track: ", info[0].tracks[0]);
 
             //if type is known
             if (info[0].tracks[0].type) {
@@ -47,8 +49,6 @@ watch.add(todofolder).onChange(function (file, prev, curr, action) {
             } else {
                 console.error("type unknown")
             }
-
-            //ffmpeg(file).videoCodec('libx264').videoBitrate(8000).fps(30).output(`./media/done/${path.parse(file).name}.avi`).run();
         });
     }
 });
