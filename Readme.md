@@ -4,7 +4,7 @@ media-recode-watcher
 
 Installation
 -----
-* install ffmpeg with desired encoders
+* install ffmpeg with desired encoders (for default x264 & libfdk-aac)
 * install mediainfo
 * install imagemagic
 * install waveform (https://github.com/andrewrk/waveform)

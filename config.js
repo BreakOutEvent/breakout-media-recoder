@@ -18,8 +18,8 @@ var config = {
             sizes: [
                 {name: "low", side: 480, videobitrate: 1200, audiobitrate: 92},
                 {name: "medium", side: 720, videobitrate: 2200, audiobitrate: 128},
-                {name: "hd", side: 1280, videobitrate: 4200, audiobitrate: 192},
-                {name: "fullhd", side: 1920, videobitrate: 6200, audiobitrate: 192}
+                {name: "hd", side: 1280, videobitrate: 4200, audiobitrate: 160},
+                {name: "fullhd", side: 1920, videobitrate: 6200, audiobitrate: 160}
             ]
         },
         {

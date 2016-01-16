@@ -42,6 +42,7 @@ var q = async.queue(function (task, cb) {
         cb();
     }).catch(function (e) {
         console.error(e);
+        cb();
     });
 }, 4);
 

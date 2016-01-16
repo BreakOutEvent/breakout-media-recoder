@@ -128,8 +128,8 @@ var videoDecode = function (file, type) {
                 promises.push(new Promise(function (resolve, reject) {
                     if (thissize.width >= size.side) {
 
-                        var output = `./media/done/${type.type}/${size.name}/${path.parse(file).name}.webm`;
-                        var decoder = ffmpeg(file).videoCodec('libvpx-vp9').size(`${size.side}x?`).audioCodec('libvorbis').audioBitrate(size.audiobitrate).audioChannels(2).audioFrequency(44100).videoBitrate(size.videobitrate).outputOptions(['-cpu-used 2', '-threads 2']).output(output);
+                        var output = `./media/done/${type.type}/${size.name}/${path.parse(file).name}.mp4`;
+                        var decoder = ffmpeg(file).videoCodec('libx264').size(`${size.side}x?`).audioCodec('libfdk_aac').audioBitrate(size.audiobitrate).audioChannels(2).audioFrequency(44100).videoBitrate(size.videobitrate).outputOptions(['-cpu-used 2', '-threads 2', '-profile:v high', '-level 4.2']).output(output);
 
                         var hadprogress = 0;
 
