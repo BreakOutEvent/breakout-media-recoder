@@ -1,6 +1,12 @@
 var decoders = require('./decoders');
 
 var config = {
+    s3: {
+        accessKey: 'access-key',
+        secretAccessKey: 'secret-key',
+        bucketName: 'bucket-name',
+        region: 'region-code'
+    },
     types: [
         {
             type: "image",

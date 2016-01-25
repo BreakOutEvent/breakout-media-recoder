@@ -33,8 +33,15 @@ var getSizeCalc = function (size, biggerside) {
     return size;
 };
 
+var uploadS3 = function (id, file, type, size, s3) {
+    s3.uploadFile(file).then(function (url) {
+        //TODO DB update
+        console.log(id, url);
+    });
+};
 
-var imageDecode = function (file, type) {
+
+var imageDecode = function (id, file, type, s3) {
 
     return new Promise(function (resolve, reject) {
         getSize(file).then(function (thissize) {
@@ -58,13 +65,14 @@ var imageDecode = function (file, type) {
                             reject();
                         }
                         console.log(`image file "${path.parse(file).base}" resized to fit within ${size.side}px`);
-                        resolve();
+                        uploadS3(id, output, type.type, size.name, s3);
+                        resolve(output);
                     });
                 }));
             });
 
-            Promise.all(promises).then(function () {
-                resolve();
+            Promise.all(promises).then(function (files) {
+                resolve(files);
             }).catch(function (e) {
                 reject(e);
             });
@@ -76,7 +84,7 @@ var imageDecode = function (file, type) {
 };
 
 
-var audioDecode = function (file, type) {
+var audioDecode = function (id, file, type, s3) {
     var promises = [];
 
     type.sizes.forEach(function (size) {
@@ -98,9 +106,13 @@ var audioDecode = function (file, type) {
                 });
 
                 if (size.bitrate == maxbitrate) {
-                    audioWaveform(output);
+                    audioWaveform(output).then(function (file) {
+                        uploadS3(id, file, 'image', 'waveform', s3);
+                    });
                 }
-                resolve();
+
+                uploadS3(id, output, type.type, size.name, s3);
+                resolve(output);
             });
 
             decoder.on('error', function (err, stdout, stderr) {
@@ -116,7 +128,7 @@ var audioDecode = function (file, type) {
     return Promise.all(promises);
 };
 
-var videoDecode = function (file, type) {
+var videoDecode = function (id, file, type, s3) {
     return new Promise(function (resolve, reject) {
         getSize(file).then(function (thissize) {
             var promises = [];
@@ -143,7 +155,8 @@ var videoDecode = function (file, type) {
 
                         decoder.on('end', function () {
                             console.log(`video file "${path.parse(file).base}" converted to ${size.videobitrate}kbit/s`);
-                            resolve();
+                            uploadS3(id, output, type.type, size.name, s3);
+                            resolve(output);
                         });
 
                         decoder.on('error', function (err, stdout, stderr) {
@@ -153,15 +166,14 @@ var videoDecode = function (file, type) {
 
                         decoder.run();
 
-
                     } else {
                         console.log(`skipping "${path.parse(file).base}": ${size.name}`)
                         resolve();
                     }
                 }));
             });
-            Promise.all(promises).then(function () {
-                resolve();
+            Promise.all(promises).then(function (files) {
+                resolve(files);
             }).catch(function (e) {
                 reject(e);
             });
@@ -189,7 +201,7 @@ var audioWaveform = function (file) {
                 reject();
             }
             console.log(`created waveform ${output}`);
-            resolve();
+            resolve(output);
         });
     });
 };
