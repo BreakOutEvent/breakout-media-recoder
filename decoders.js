@@ -1,50 +1,21 @@
 var ffmpeg = require('fluent-ffmpeg');
 var im = require('imagemagick');
 var path = require('path');
-var mediainfo = require("mediainfo-q");
 var waveform = require('waveform');
 var config = require('./config.json');
+var helpers = require('./helpers');
 var postprocess = require('./postprocess');
-
-var getSize = function (file) {
-    return new Promise(function (resolve, reject) {
-        mediainfo(file).then(function (res) {
-            var size = {width: 0, height: 0};
-            size.width = parseInt(res[0].tracks[0].width.replace(/[^0-9]/, ''));
-            size.height = parseInt(res[0].tracks[0].height.replace(/[^0-9]/, ''));
-            console.log(size);
-            resolve(size);
-        }).catch(function (e) {
-            reject(e);
-        });
-    });
-};
-
-var getSizeCalc = function (size, biggerside) {
-    var factor = 1;
-
-    if (size.height > size.width) {
-        factor = biggerside / size.height;
-        size.height = biggerside;
-        size.width = parseInt(size.width * factor);
-    } else {
-        factor = biggerside / size.width;
-        size.width = biggerside;
-        size.height = parseInt(size.height * factor);
-    }
-    return size;
-};
 
 var imageDecode = function (id, file, type) {
 
     return new Promise(function (resolve, reject) {
-        getSize(file).then(function (thissize) {
+        helpers.getSize(file).then(function (thissize) {
             var promises = [];
 
             type.sizes.forEach(function (size) {
                 promises.push(new Promise(function (resolve, reject) {
                     var output = `${config.mediafolder}done/${type.typename}/${size.name}/${path.parse(file).name}.jpg`;
-                    var destsize = getSizeCalc(thissize, size.side);
+                    var destsize = helpers.getSizeCalc(thissize, size.side);
 
                     im.resize({
                         srcPath: file,
@@ -119,12 +90,12 @@ var audioDecode = function (id, file, type) {
         }));
     });
 
-    return Promise.all(promises);
+    return Promise.all(promises)
 };
 
 var videoDecode = function (id, file, type) {
     return new Promise(function (resolve, reject) {
-        getSize(file).then(function (thissize) {
+        helpers.getSize(file).then(function (thissize) {
             var promises = [];
 
             //create video thumbnail in do-folder
