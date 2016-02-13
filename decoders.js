@@ -3,6 +3,8 @@ var im = require('imagemagick');
 var path = require('path');
 var mediainfo = require("mediainfo-q");
 var waveform = require('waveform');
+var config = require('./config.json');
+var postprocess = require('./postprocess');
 
 var getSize = function (file) {
     return new Promise(function (resolve, reject) {
@@ -33,15 +35,7 @@ var getSizeCalc = function (size, biggerside) {
     return size;
 };
 
-var uploadS3 = function (id, file, type, size, s3) {
-    s3.uploadFile(file).then(function (url) {
-        //TODO DB update
-        console.log(id, url);
-    });
-};
-
-
-var imageDecode = function (id, file, type, s3) {
+var imageDecode = function (id, file, type) {
 
     return new Promise(function (resolve, reject) {
         getSize(file).then(function (thissize) {
@@ -49,7 +43,7 @@ var imageDecode = function (id, file, type, s3) {
 
             type.sizes.forEach(function (size) {
                 promises.push(new Promise(function (resolve, reject) {
-                    var output = `./media/done/${type.type}/${size.name}/${path.parse(file).name}.jpg`;
+                    var output = `${config.mediafolder}done/${type.typename}/${size.name}/${path.parse(file).name}.jpg`;
                     var destsize = getSizeCalc(thissize, size.side);
 
                     im.resize({
@@ -65,7 +59,7 @@ var imageDecode = function (id, file, type, s3) {
                             reject();
                         }
                         console.log(`image file "${path.parse(file).base}" resized to fit within ${size.side}px`);
-                        uploadS3(id, output, type.type, size.name, s3);
+                        postprocess(id, output, type.typename, size);
                         resolve(output);
                     });
                 }));
@@ -84,14 +78,14 @@ var imageDecode = function (id, file, type, s3) {
 };
 
 
-var audioDecode = function (id, file, type, s3) {
+var audioDecode = function (id, file, type) {
     var promises = [];
 
     type.sizes.forEach(function (size) {
 
         promises.push(new Promise(function (resolve, reject) {
 
-            var output = `./media/done/${type.type}/${size.name}/${path.parse(file).name}.mp3`;
+            var output = `${config.mediafolder}done/${type.typename}/${size.name}/${path.parse(file).name}.mp3`;
             var decoder = ffmpeg(file).audioCodec('libmp3lame').audioBitrate(size.bitrate).audioChannels(2).audioFrequency(44100).output(output);
 
             decoder.on('end', function () {
@@ -107,11 +101,11 @@ var audioDecode = function (id, file, type, s3) {
 
                 if (size.bitrate == maxbitrate) {
                     audioWaveform(output).then(function (file) {
-                        uploadS3(id, file, 'image', 'waveform', s3);
+                        postprocess(id, file, 'image', 'waveform');
                     });
                 }
 
-                uploadS3(id, output, type.type, size.name, s3);
+                postprocess(id, output, type.typename, size.name);
                 resolve(output);
             });
 
@@ -128,19 +122,19 @@ var audioDecode = function (id, file, type, s3) {
     return Promise.all(promises);
 };
 
-var videoDecode = function (id, file, type, s3) {
+var videoDecode = function (id, file, type) {
     return new Promise(function (resolve, reject) {
         getSize(file).then(function (thissize) {
             var promises = [];
 
             //create video thumbnail in do-folder
-            ffmpeg(file).outputOptions(['-ss 00:00:01.000', '-vframes 1']).output(`./media/todo/${path.parse(file).name}.jpg`).run();
+            ffmpeg(file).outputOptions(['-ss 00:00:01.000', '-vframes 1']).output(`${config.mediafolder}todo/${path.parse(file).name}.jpg`).run();
 
             type.sizes.forEach(function (size) {
                 promises.push(new Promise(function (resolve, reject) {
                     if (thissize.width >= size.side) {
 
-                        var output = `./media/done/${type.type}/${size.name}/${path.parse(file).name}.mp4`;
+                        var output = `${config.mediafolder}done/${type.typename}/${size.name}/${path.parse(file).name}.mp4`;
                         var decoder = ffmpeg(file).videoCodec('libx264').size(`${size.side}x?`).audioCodec('libfdk_aac').audioBitrate(size.audiobitrate).audioChannels(2).audioFrequency(44100).videoBitrate(size.videobitrate).outputOptions(['-cpu-used 2', '-threads 2', '-profile:v high', '-level 4.2']).output(output);
 
                         var hadprogress = 0;
@@ -155,7 +149,7 @@ var videoDecode = function (id, file, type, s3) {
 
                         decoder.on('end', function () {
                             console.log(`video file "${path.parse(file).base}" converted to ${size.videobitrate}kbit/s`);
-                            uploadS3(id, output, type.type, size.name, s3);
+                            postprocess(id, output, type.typename, size.name);
                             resolve(output);
                         });
 
@@ -187,7 +181,7 @@ var videoDecode = function (id, file, type, s3) {
 //sudo apt-get install libgroove-dev libpng12-dev zlib1g-dev
 var audioWaveform = function (file) {
     return new Promise(function (resolve, reject) {
-        var output = `./media/done/audio/waveform/${path.parse(file).name}.png`;
+        var output = `${config.mediafolder}done/audio/waveform/${path.parse(file).name}.png`;
         waveform(file, {
             png: output,
             'png-width': 500,
@@ -209,6 +203,5 @@ var audioWaveform = function (file) {
 module.exports = {
     imageDecode: imageDecode,
     audioDecode: audioDecode,
-    videoDecode: videoDecode,
-    audioWaveform: audioWaveform
+    videoDecode: videoDecode
 };
