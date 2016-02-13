@@ -37,7 +37,7 @@ var uploadFile = function (localfile) {
             //console.log("progress", uploader.progressMd5Amount, uploader.progressAmount, uploader.progressTotal);
         });
         uploader.on('end', function () {
-            resolve(url);
+            resolve({remotename: remotename, url: url});
         });
     });
 };
