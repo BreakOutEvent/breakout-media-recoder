@@ -86,7 +86,7 @@ var audioDecode = function (id, file, type) {
         promises.push(new Promise(function (resolve, reject) {
 
             var output = `${config.mediafolder}done/${type.typename}/${size.name}/${path.parse(file).name}.mp3`;
-            var decoder = ffmpeg(file).audioCodec('libmp3lame').audioBitrate(size.bitrate).audioChannels(2).audioFrequency(44100).output(output);
+            var decoder = ffmpeg(file).audioCodec(size.audiocodec).audioBitrate(size.bitrate).audioChannels(2).audioFrequency(44100).output(output);
 
             decoder.on('end', function () {
                 console.log(`audio file "${path.parse(file).base}" converted to ${size.bitrate}kbit/s`);
@@ -101,11 +101,11 @@ var audioDecode = function (id, file, type) {
 
                 if (size.bitrate == maxbitrate) {
                     audioWaveform(output).then(function (file) {
-                        postprocess(id, file, 'image', 'waveform');
+                        postprocess(id, file, 'image', {name: 'waveform'});
                     });
                 }
 
-                postprocess(id, output, type.typename, size.name);
+                postprocess(id, output, type.typename, size);
                 resolve(output);
             });
 
@@ -135,7 +135,7 @@ var videoDecode = function (id, file, type) {
                     if (thissize.width >= size.side) {
 
                         var output = `${config.mediafolder}done/${type.typename}/${size.name}/${path.parse(file).name}.mp4`;
-                        var decoder = ffmpeg(file).videoCodec('libx264').size(`${size.side}x?`).audioCodec('libfdk_aac').audioBitrate(size.audiobitrate).audioChannels(2).audioFrequency(44100).videoBitrate(size.videobitrate).outputOptions(['-cpu-used 2', '-threads 2', '-profile:v high', '-level 4.2']).output(output);
+                        var decoder = ffmpeg(file).videoCodec(size.videocodec).size(`${size.side}x?`).audioCodec(size.audiocodec).audioBitrate(size.audiobitrate).audioChannels(2).audioFrequency(44100).videoBitrate(size.videobitrate).outputOptions(['-cpu-used 2', '-threads 2', '-profile:v high', '-level 4.2']).output(output);
 
                         var hadprogress = 0;
 
@@ -149,7 +149,7 @@ var videoDecode = function (id, file, type) {
 
                         decoder.on('end', function () {
                             console.log(`video file "${path.parse(file).base}" converted to ${size.videobitrate}kbit/s`);
-                            postprocess(id, output, type.typename, size.name);
+                            postprocess(id, output, type.typename, size);
                             resolve(output);
                         });
 

@@ -39,25 +39,33 @@
         {
           "name": "low",
           "side": 480,
+          "videocodec": "libx264",
           "videobitrate": 1200,
+          "audiocodec": "libfdk_aac",
           "audiobitrate": 92
         },
         {
           "name": "medium",
           "side": 720,
+          "videocodec": "libx264",
           "videobitrate": 2200,
+          "audiocodec": "libfdk_aac",
           "audiobitrate": 128
         },
         {
           "name": "hd",
           "side": 1280,
+          "videocodec": "libx264",
           "videobitrate": 4200,
+          "audiocodec": "libfdk_aac",
           "audiobitrate": 160
         },
         {
           "name": "fullhd",
           "side": 1920,
+          "videocodec": "libx264",
           "videobitrate": 6200,
+          "audiocodec": "libfdk_aac",
           "audiobitrate": 160
         }
       ]
@@ -67,14 +75,17 @@
       "sizes": [
         {
           "name": "low",
+          "audiocodec": "libmp3lame",
           "bitrate": 48
         },
         {
           "name": "medium",
+          "audiocodec": "libmp3lame",
           "bitrate": 92
         },
         {
           "name": "high",
+          "audiocodec": "libmp3lame",
           "bitrate": 192
         }
       ]
