@@ -1,44 +1,14 @@
 var watch = require('nodewatch');
-var config = require('./config.json');
 var async = require('async');
 var mime = require('mime');
 var path = require('path');
 var fs = require('fs');
+var preprocess = require('./preprocess');
+var config = require('./config.json');
 var decoders = require('./decoders');
 var postprocess = require('./postprocess');
 
-const todofolder = `${config.mediafolder}todo`;
-const donefolder = `${config.mediafolder}done`;
-
-var createfolder = function (folder) {
-    if (!fs.existsSync(folder)) {
-        fs.mkdirSync(folder);
-    }
-};
-
-//create not existing possible destination folders
-createfolder(config.mediafolder);
-createfolder(todofolder);
-createfolder(donefolder);
-config.types.forEach(function (type) {
-    var possibledesttype = `${donefolder}/${type.typename}/`;
-    createfolder(possibledesttype);
-
-    var originalfolder = `${donefolder}/${type.typename}/orig/`;
-    createfolder(originalfolder);
-
-    if (type.sizes) {
-        type.sizes.forEach(function (size) {
-            var possibledest = `${donefolder}/${type.typename}/${size.name}/`;
-            createfolder(possibledest);
-        });
-    }
-});
-createfolder(`${config.mediafolder}done/audio/waveform/`);
-
-
 var q = async.queue(function (task, cb) {
-
     var decoder;
     switch (task.type.typename) {
         case "image":
@@ -77,7 +47,7 @@ var q = async.queue(function (task, cb) {
 
 
 //start folder watcher
-watch.add(todofolder).onChange(function (file, prev, curr, action) {
+watch.add(preprocess.todofolder).onChange(function (file, prev, curr, action) {
 
     console.log(action, file);
 
@@ -100,4 +70,6 @@ watch.add(todofolder).onChange(function (file, prev, curr, action) {
         }
     }
 });
+
+console.log(`Media-recoder is now watching ${preprocess.todofolder}`);
 

@@ -1,9 +1,9 @@
 {
+  "mediafolder": "./media/",
   "posthook": {
     "url": "http://localhost:8080/post/media/",
-    "key": "x-api-token"
+    "jwt_secret": "jwt-secret"
   },
-  "mediafolder": "./media/",
   "s3": {
     "accessKey": "access-key",
     "secretAccessKey": "secret-key",
