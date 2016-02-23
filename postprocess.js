@@ -3,7 +3,7 @@ var s3client = require('./s3client');
 var helpers = require('./helpers');
 var bunyan = require('bunyan');
 var path = require('path');
-var jwt = require('njwt');
+var jsonwebtoken = require('jsonwebtoken');
 var config = require('./config.json');
 
 var log = bunyan.createLogger({
@@ -27,7 +27,7 @@ module.exports = function (id, file, type, size) {
 
 function postRequest(id, file, itemurl) {
 
-    var token = jwt.create({sub: id.toString()}, config.posthook.jwt_secret, 'HS512');
+    var token = jsonwebtoken.sign({subject: id.toString()}, config.posthook.jwt_secret, {algorithm: 'HS512'});
 
     helpers.getMetaData(file).then(function (thissize) {
         request({
@@ -45,7 +45,7 @@ function postRequest(id, file, itemurl) {
             json: true,
             url: `${config.posthook.url}${id}/`
         }, function (err, res, body) {
-            if (err) console.error(err);
+            if (err) console.error(err, body);
         });
     });
 }
