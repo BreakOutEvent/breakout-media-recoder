@@ -19,13 +19,13 @@ var log = bunyan.createLogger({
 module.exports = function (id, file, type, size) {
     s3client.uploadFile(file).then(function (res) {
 
-        postRequest(id, file, res.url);
+        postRequest(id, file, res.url, type);
         console.log(id, size.name, res.url);
         log.info({id: id, orig: path.parse(file).base, remotename: res.remotename, url: res.url, type, size})
     });
 };
 
-function postRequest(id, file, itemurl) {
+function postRequest(id, file, itemurl,type) {
 
     var token = jsonwebtoken.sign({subject: id.toString()}, config.posthook.jwt_secret, {algorithm: 'HS512'});
 
@@ -37,7 +37,8 @@ function postRequest(id, file, itemurl) {
                 width: thissize.width,
                 height: thissize.height,
                 length: thissize.length,
-                size: thissize.size
+                size: thissize.size,
+                type: type
             },
             headers: {
                 'X-UPLOAD-TOKEN': token
