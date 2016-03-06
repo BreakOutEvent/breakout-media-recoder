@@ -2,12 +2,11 @@ var ffmpeg = require('fluent-ffmpeg');
 var im = require('imagemagick');
 var path = require('path');
 var waveform = require('waveform');
-var config = require('./config.json');
+var config = require('../config.json');
 var helpers = require('./helpers');
 var postprocess = require('./postprocess');
 
 var imageDecode = function (id, file, type) {
-
     return new Promise(function (resolve, reject) {
         helpers.getSize(file).then(function (thissize) {
             var promises = [];

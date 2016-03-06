@@ -1,7 +1,7 @@
 var s3 = require('s3');
 var uuid = require('node-uuid');
 var path = require('path');
-var config = require('./config.json');
+var config = require('../config.json');
 
 var client = s3.createClient({
     maxAsyncS3: 20,

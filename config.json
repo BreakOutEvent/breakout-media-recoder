@@ -1,4 +1,5 @@
 {
+  "postprocess": false,
   "mediafolder": "./media/",
   "posthook": {
     "url": "http://localhost:8080/post/media/",
