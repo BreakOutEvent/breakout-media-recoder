@@ -1,5 +1,6 @@
 var mediainfo = require("mediainfo-q");
 var fs = require("fs");
+var extend = require('util')._extend;
 
 var getSize = function (file) {
     return new Promise(function (resolve, reject) {
@@ -19,17 +20,18 @@ var getSize = function (file) {
 
 var getSizeCalc = function (size, biggerside) {
     var factor = 1;
+    var endsize = extend({}, size);
 
     if (size.height > size.width) {
         factor = biggerside / size.height;
-        size.height = biggerside;
-        size.width = parseInt(size.width * factor);
+        endsize.height = biggerside;
+        endsize.width = parseInt(size.width * factor);
     } else {
         factor = biggerside / size.width;
-        size.width = biggerside;
-        size.height = parseInt(size.height * factor);
+        endsize.width = biggerside;
+        endsize.height = parseInt(size.height * factor);
     }
-    return size;
+    return endsize;
 };
 
 var getMetaData = function (file) {

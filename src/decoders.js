@@ -13,25 +13,30 @@ var imageDecode = function (id, file, type) {
 
             type.sizes.forEach(function (size) {
                 promises.push(new Promise(function (resolve, reject) {
-                    var output = `${config.mediafolder}done/${type.typename}/${size.name}/${path.parse(file).name}.jpg`;
-                    var destsize = helpers.getSizeCalc(thissize, size.side);
+                    if ((thissize.width * 1.1) >= size.side || (thissize.height * 1.1) >= size.side) {
+                        var output = `${config.mediafolder}done/${type.typename}/${size.name}/${path.parse(file).name}.jpg`;
+                        var destsize = helpers.getSizeCalc(thissize, size.side);
 
-                    im.resize({
-                        srcPath: file,
-                        dstPath: output,
-                        width: destsize.width,
-                        height: destsize.height,
-                        format: 'jpg',
-                        quality: size.quality
-                    }, function (err, stdout, stderr) {
-                        if (err) {
-                            console.error(err);
-                            reject();
-                        }
-                        console.log(`image file "${path.parse(file).base}" resized to fit within ${size.side}px`);
-                        postprocess(id, output, type.typename, size);
-                        resolve(output);
-                    });
+                        im.resize({
+                            srcPath: file,
+                            dstPath: output,
+                            width: destsize.width,
+                            height: destsize.height,
+                            format: 'jpg',
+                            quality: size.quality
+                        }, function (err, stdout, stderr) {
+                            if (err) {
+                                console.error(err);
+                                reject();
+                            }
+                            console.log(`image file "${path.parse(file).base}" resized to fit within ${size.side}px`);
+                            postprocess(id, output, type.typename, size);
+                            resolve(output);
+                        });
+                    } else {
+                        console.log(`skipping "${path.parse(file).base}": ${size.name}`);
+                        resolve();
+                    }
                 }));
             });
 
@@ -102,7 +107,7 @@ var videoDecode = function (id, file, type) {
 
             type.sizes.forEach(function (size) {
                 promises.push(new Promise(function (resolve, reject) {
-                    if (thissize.width >= size.side) {
+                    if ((thissize.width * 1.1) >= size.side) {
 
                         var output = `${config.mediafolder}done/${type.typename}/${size.name}/${path.parse(file).name}.mp4`;
                         var decoder = ffmpeg(file).videoCodec(size.videocodec).size(`${size.side}x?`).audioCodec(size.audiocodec).audioBitrate(size.audiobitrate).audioChannels(2).audioFrequency(44100).videoBitrate(size.videobitrate).outputOptions(['-cpu-used 2', '-threads 2', '-profile:v high', '-level 4.2']).output(output);
