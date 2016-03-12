@@ -2,7 +2,7 @@
   "postprocess": false,
   "mediafolder": "./media/",
   "posthook": {
-    "url": "http://localhost:8080/post/media/",
+    "url": "http://localhost:8080/media/",
     "jwt_secret": "jwt-secret"
   },
   "s3": {
