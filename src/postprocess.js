@@ -1,5 +1,6 @@
 var request = require('request');
 var s3client = require('./s3client');
+var azureclient = require('./azureclient');
 var helpers = require('./helpers');
 var bunyan = require('bunyan');
 var path = require('path');
@@ -18,7 +19,7 @@ var log = bunyan.createLogger({
 
 module.exports = function (id, file, type, size) {
     if (config.postprocess) {
-        s3client.uploadFile(file).then(function (res) {
+        azureclient.uploadFile(file).then(function (res) {
             postRequest(id, file, res.url, type);
             console.log(id, size.name, res.url);
             log.info({id: id, orig: path.parse(file).base, remotename: res.remotename, url: res.url, type, size})

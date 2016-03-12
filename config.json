@@ -11,6 +11,11 @@
     "bucketName": "bucket-name",
     "region": "region-code"
   },
+  "azure": {
+    "accountName": "account-name",
+    "accountKey": "account-key",
+    "containerName": "container-name"
+  },
   "types": [
     {
       "typename": "image",

@@ -136,7 +136,7 @@ var videoDecode = function (id, file, type) {
                         decoder.run();
 
                     } else {
-                        console.log(`skipping "${path.parse(file).base}": ${size.name}`)
+                        console.log(`skipping "${path.parse(file).base}": ${size.name}`);
                         resolve();
                     }
                 }));
