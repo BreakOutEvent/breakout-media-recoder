@@ -1,4 +1,4 @@
-media-recode-watcher
+breakout-media-recoder
 =================
 ##### Watching a folder to recode Image/Video and Audio
 
@@ -8,7 +8,7 @@ Installation
 * install mediainfo
 * install imagemagic
 * install waveform (https://github.com/andrewrk/waveform)
-* configure s3 bucket access
+* configure s3 bucket or azure storage access
 * npm install
 * npm start
 
@@ -36,6 +36,20 @@ Usage
 }
 ```
 
-License
------
-MIT
+# License
+breakout-media-recoder. The media recoder for BreakOut
+
+Copyright (C) 2015-2016 Philipp Piwowarsky
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of the
+License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see http://www.gnu.org/licenses/
