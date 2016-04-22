@@ -9,7 +9,7 @@ var uploadFile = function (localfile) {
     return new Promise(function (resolve, reject) {
         var remotename = uuid.v4() + path.parse(localfile).ext;
 
-        blobService.createBlockBlobFromLocalFile('recode', remotename, localfile, function (err, result, response) {
+        blobService.createBlockBlobFromLocalFile(config.azure.containerName, remotename, localfile, function (err, result, response) {
             if (!err) {
                 var url = `https://${config.azure.accountName}.blob.core.windows.net/${config.azure.containerName}/${result}`;
                 resolve({remotename: remotename, url: url});

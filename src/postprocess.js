@@ -60,11 +60,12 @@ function postRequest(id, file, itemurl, type) {
                 if (err) {
                     console.error(err, body);
                     reject(err);
-                }
-                if (res.statusCode === 201) {
-                    resolve("backend accepted");
                 } else {
-                    reject(`status: ${res.statusCode}`);
+                    if (res.statusCode === 201) {
+                        resolve("backend accepted");
+                    } else {
+                        reject(`status: ${res.statusCode}`);
+                    }
                 }
             });
         }).catch(function (e) {
