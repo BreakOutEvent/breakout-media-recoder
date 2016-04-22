@@ -16,6 +16,12 @@
     "accountKey": "account-key",
     "containerName": "container-name"
   },
+  "owncloud": {
+    "username": "username",
+    "password": "password",
+    "host": "host",
+    "remoteFolder": "remote-folder"
+  },
   "types": [
     {
       "typename": "image",
