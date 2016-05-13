@@ -6,7 +6,7 @@ Installation
 -----
 * install ffmpeg with desired encoders (for default x264 & libfdk-aac)
 * install mediainfo
-* install imagemagic
+* install imagemagick
 * install waveform (https://github.com/andrewrk/waveform)
 * configure s3 bucket or azure storage access
 * npm install
