@@ -1,12 +1,14 @@
-version: '0.1'
+version: '2'
 services:
   uploader:
+    container_name: uploader
     image: docker.breakout.xyz:5000/media-uploader:latest
     ports:
-    - "3001:3001"
+      - "3001:3001"
     volumes:
-    - media:/media
-  uploader:
+      - ./media:/media
+  recoder:
+    container_name: recoder
     image: docker.breakout.xyz:5000/media-recoder:latest
-    volumes:
-    - media:/media
+    volumes_from:
+      - uploader
