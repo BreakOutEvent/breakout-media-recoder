@@ -27,7 +27,7 @@ module.exports = function (id, file, type, size) {
                 console.error("ERROR", e);
             });
             console.log(id, size.name, res.url);
-            log.info({id: id, orig: path.parse(file).base, remotename: res.remotename, url: res.url, type, size})
+            log.info({ id: id, orig: path.parse(file).base, remotename: res.remotename, url: res.url, type, size })
         });
 
         if (size.name === "orig") {
@@ -39,35 +39,55 @@ module.exports = function (id, file, type, size) {
 function postRequest(id, file, itemurl, type) {
 
     return new Promise(function (resolve, reject) {
-        var token = jsonwebtoken.sign({subject: id.toString()}, config.posthook.jwt_secret, {algorithm: 'HS512'});
+        var token = jsonwebtoken.sign({ subject: id.toString() }, config.posthook.jwt_secret, { algorithm: 'HS512' });
         helpers.getMetaData(file).then(function (thissize) {
-            request({
-                method: 'post',
-                body: {
-                    url: itemurl,
-                    width: thissize.width,
-                    height: thissize.height,
-                    length: thissize.length,
-                    size: thissize.size,
-                    type: type
-                },
-                headers: {
-                    'X-UPLOAD-TOKEN': token
-                },
-                json: true,
-                url: `${config.posthook.url}${id}/`
-            }, function (err, res, body) {
-                if (err) {
-                    console.error(err, body);
-                    reject(err);
-                } else {
-                    if (res.statusCode === 201) {
-                        resolve("backend accepted");
+            setTimeout(function () {
+                var options = {
+                    method: 'post',
+                    body: {
+                        url: itemurl,
+                        width: thissize.width,
+                        height: thissize.height,
+                        length: thissize.length,
+                        size: thissize.size,
+                        type: type
+                    },
+                    headers: {
+                        'X-UPLOAD-TOKEN': token
+                    },
+                    json: true,
+                    url: `${config.posthook.url}${id}/`
+                };
+
+                request(options, function (err, res, body) {
+                    if (err) {
+                        console.error(err, body);
+                        reject(err);
                     } else {
-                        reject(`status: ${res.statusCode}`);
+                        if (res.statusCode === 201) {
+                            resolve("backend accepted");
+                        } else {
+
+                            //Retry once if failed
+                            setTimeout(function () {
+                                request(options, function (err, res, body) {
+                                    if (err) {
+                                        console.error(err, body);
+                                        reject(err);
+                                    } else {
+                                        if (res.statusCode === 201) {
+                                            resolve("backend accepted");
+                                        } else {
+                                            reject(`status: ${res.statusCode}`);
+                                        }
+                                    }
+                                });
+                            }, Math.floor(Math.random() * 1000) + 200);
+
+                        }
                     }
-                }
-            });
+                });
+            }, Math.floor(Math.random() * 500) + 100);
         }).catch(function (e) {
             reject(`Metadata Error! ${e}`);
         });
