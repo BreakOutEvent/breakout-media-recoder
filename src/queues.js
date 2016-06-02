@@ -32,6 +32,7 @@ var defaultqueue = async.queue(function (task, cb) {
             cb();
         });
     } else {
+        handleorig(task);
         cb();
     }
 }, 3);
@@ -57,12 +58,12 @@ function handleorig(task) {
     fs.rename(task.file, origto, function (err) {
         if (err) console.error(err);
         filesprocessed = filesprocessed + 1;
-        postprocess(task.media_id, origto, task.type.typename, {name: 'orig'})
+        postprocess(task.media_id, origto, task.type.typename, { name: 'orig' })
     });
 }
 
 var loadindex = function () {
-    return {imagequeue: imagequeue.length(), defaultqueue: defaultqueue.length(), filesprocessed: filesprocessed};
+    return { imagequeue: imagequeue.length(), defaultqueue: defaultqueue.length(), filesprocessed: filesprocessed };
 };
 
 var logload = function () {

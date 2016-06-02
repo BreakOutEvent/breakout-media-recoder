@@ -18,14 +18,16 @@ watch.add(preprocess.todofolder).onChange(function (file, prev, curr, action) {
             //if type is known
             var filetype = mime.lookup(file).split('/')[0];
 
+            if (filetype == "application") filetype = "document";
+
             config.types.forEach(function (type) {
                 if (type.typename === filetype) {
                     if (type.typename == "image") {
-                        queues.imagequeue.push({type: type, file: file, media_id: mediaid}, function (err) {
+                        queues.imagequeue.push({ type: type, file: file, media_id: mediaid }, function (err) {
                             if (err) console.error(err);
                         });
                     } else {
-                        queues.defaultqueue.push({type: type, file: file, media_id: mediaid}, function (err) {
+                        queues.defaultqueue.push({ type: type, file: file, media_id: mediaid }, function (err) {
                             if (err) console.error(err);
                         });
                     }

@@ -24,6 +24,9 @@
   },
   "types": [
     {
+      "typename": "document"
+    },
+    {
       "typename": "image",
       "sizes": [
         {
