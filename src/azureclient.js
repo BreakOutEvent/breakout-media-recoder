@@ -11,8 +11,16 @@ var uploadFile = function (localfile) {
 
         blobService.createBlockBlobFromLocalFile(config.azure.containerName, remotename, localfile, function (err, result, response) {
             if (!err) {
-                var url = `https://${config.azure.accountName}.blob.core.windows.net/${config.azure.containerName}/${result}`;
-                resolve({remotename: remotename, url: url});
+
+                if (typeof result === 'string') {
+                    var url = `https://${config.azure.accountName}.blob.core.windows.net/${config.azure.containerName}/${result}`;
+                    resolve({ remotename: remotename, url: url });
+                } else {
+                    console.error("NO STRING RESULT FROM AZURE");
+                    console.error(result);
+                    console.error(JSON.stringify(result));
+                    reject(result);
+                }
             } else {
                 console.error(err);
                 reject();
