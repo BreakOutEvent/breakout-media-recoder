@@ -24,6 +24,9 @@
   },
   "types": [
     {
+      "typename": "document"
+    },
+    {
       "typename": "image",
       "sizes": [
         {
@@ -62,7 +65,7 @@
         {
           "name": "low",
           "side": 480,
-          "videocodec": "libvpx-vp9",
+          "videocodec": "libvpx",
           "videobitrate": 1000,
           "audiocodec": "libvorbis",
           "audiobitrate": 92

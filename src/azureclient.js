@@ -11,8 +11,8 @@ var uploadFile = function (localfile) {
 
         blobService.createBlockBlobFromLocalFile(config.azure.containerName, remotename, localfile, function (err, result, response) {
             if (!err) {
-                var url = `https://${config.azure.accountName}.blob.core.windows.net/${config.azure.containerName}/${result}`;
-                resolve({remotename: remotename, url: url});
+                var url = `https://${config.azure.accountName}.blob.core.windows.net/${config.azure.containerName}/${remotename}`;
+                resolve({ remotename: remotename, url: url });
             } else {
                 console.error(err);
                 reject();
