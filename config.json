@@ -52,7 +52,7 @@
       "typename": "video",
       "sizes": [
         {
-          "name": "low",
+          "name": "lowh264",
           "side": 480,
           "videocodec": "libx264",
           "videobitrate": 1200,
@@ -60,27 +60,35 @@
           "audiobitrate": 92
         },
         {
+          "name": "low",
+          "side": 480,
+          "videocodec": "libvpx-vp9",
+          "videobitrate": 1000,
+          "audiocodec": "libvorbis",
+          "audiobitrate": 92
+        },
+        {
           "name": "medium",
           "side": 720,
-          "videocodec": "libx264",
-          "videobitrate": 2200,
-          "audiocodec": "libfdk_aac",
+          "videocodec": "libvpx",
+          "videobitrate": 1800,
+          "audiocodec": "libvorbis",
           "audiobitrate": 128
         },
         {
           "name": "hd",
           "side": 1280,
-          "videocodec": "libx264",
-          "videobitrate": 4200,
-          "audiocodec": "libfdk_aac",
-          "audiobitrate": 160
+          "videocodec": "libvpx",
+          "videobitrate": 3000,
+          "audiocodec": "libvorbis",
+          "audiobitrate": 128
         },
         {
           "name": "fullhd",
           "side": 1920,
-          "videocodec": "libx264",
-          "videobitrate": 6200,
-          "audiocodec": "libfdk_aac",
+          "videocodec": "libvpx",
+          "videobitrate": 4500,
+          "audiocodec": "libvorbis",
           "audiobitrate": 160
         }
       ]

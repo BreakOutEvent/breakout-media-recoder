@@ -109,8 +109,16 @@ var videoDecode = function (id, file, type) {
                 promises.push(new Promise(function (resolve, reject) {
                     if ((thissize.width * 1.1) >= size.side) {
 
-                        var output = `${config.mediafolder}done/${type.typename}/${size.name}/${path.parse(file).name}.mp4`;
-                        var decoder = ffmpeg(file).videoCodec(size.videocodec).size(`${size.side}x?`).audioCodec(size.audiocodec).audioBitrate(size.audiobitrate).audioChannels(2).audioFrequency(44100).videoBitrate(size.videobitrate).outputOptions(['-cpu-used 2', '-threads 2', '-profile:v high', '-level 4.2']).output(output);
+                        var decoder;
+                        var output;
+
+                        if (size.videocodec === "libx264") {
+                            output = `${config.mediafolder}done/${type.typename}/${size.name}/${path.parse(file).name}.mp4`;
+                            decoder = ffmpeg(file).videoCodec(size.videocodec).size(`${size.side}x?`).audioCodec(size.audiocodec).audioBitrate(size.audiobitrate).audioChannels(2).audioFrequency(44100).videoBitrate(size.videobitrate).outputOptions(['-cpu-used 2', '-threads 2', '-profile:v high', '-level 4.2']).output(output);
+                        } else {
+                            output = `${config.mediafolder}done/${type.typename}/${size.name}/${path.parse(file).name}.webm`;
+                            decoder = ffmpeg(file).videoCodec(size.videocodec).size(`${size.side}x?`).audioCodec(size.audiocodec).audioBitrate(size.audiobitrate).audioChannels(2).audioFrequency(44100).videoBitrate(size.videobitrate).outputOptions(['-cpu-used 2', '-threads 2', '-deadline good']).output(output);
+                        }
 
                         var hadprogress = 0;
 
@@ -122,6 +130,10 @@ var videoDecode = function (id, file, type) {
                             }
                         });
 
+                        decoder.on('start', function () {
+                            console.log("started decode");
+                        });
+
                         decoder.on('end', function () {
                             console.log(`video file "${path.parse(file).base}" converted to ${size.videobitrate}kbit/s`);
                             postprocess(id, output, type.typename, size);
@@ -130,6 +142,8 @@ var videoDecode = function (id, file, type) {
 
                         decoder.on('error', function (err, stdout, stderr) {
                             console.error(err);
+                            console.error(stdout);
+                            console.error(stderr);
                             reject();
                         });
 
