@@ -39,7 +39,7 @@ Usage
 # License
 breakout-media-recoder. The media recoder for BreakOut
 
-Copyright (C) 2015-2016 Philipp Piwowarsky
+Copyright (C) Philipp Piwowarsky
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as

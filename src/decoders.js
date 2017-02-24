@@ -23,7 +23,8 @@ var imageDecode = function (id, file, type) {
                             width: destsize.width,
                             height: destsize.height,
                             format: 'jpg',
-                            quality: size.quality
+                            quality: size.quality,
+                            customArgs: ['-auto-orient']
                         }, function (err, stdout, stderr) {
                             if (err) {
                                 console.error(err);

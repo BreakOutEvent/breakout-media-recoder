@@ -1,5 +1,8 @@
 FROM ubuntu:xenial
 
+RUN apt-get update
+RUN apt-get upgrade -y
+
 # Set Locale
 RUN locale-gen en_US.UTF-8  
 ENV LANG en_US.UTF-8  
