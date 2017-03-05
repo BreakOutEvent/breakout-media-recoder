@@ -60,6 +60,14 @@
       "typename": "video",
       "sizes": [
         {
+          "name": "ulowh264",
+          "side": 240,
+          "videocodec": "libx264",
+          "videobitrate": 800,
+          "audiocodec": "libfdk_aac",
+          "audiobitrate": 92
+        },
+        {
           "name": "lowh264",
           "side": 480,
           "videocodec": "libx264",
