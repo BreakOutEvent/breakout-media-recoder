@@ -59,6 +59,7 @@ function postRequest(id, file, itemurl, type) {
                     url: `${config.posthook.url}${id}/`
                 };
 
+                console.log("Sending item to backend with options "+JSON.stringify(options));
                 request(options, function (err, res, body) {
                     if (err) {
                         console.error(err, body);
