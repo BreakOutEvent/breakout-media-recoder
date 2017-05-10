@@ -1,5 +1,5 @@
 var azure = require('azure-storage');
-var uuid = require('node-uuid');
+var uuidV4 = require('uuid/v4');
 var path = require('path');
 var config = require('../config.json');
 
@@ -7,7 +7,7 @@ var blobService = azure.createBlobService(config.azure.accountName, config.azure
 
 var uploadFile = function (localfile) {
     return new Promise(function (resolve, reject) {
-        var remotename = uuid.v4() + path.parse(localfile).ext;
+        var remotename = uuidV4() + path.parse(localfile).ext;
 
         blobService.createBlockBlobFromLocalFile(config.azure.containerName, remotename, localfile, function (err, result, response) {
             if (!err) {

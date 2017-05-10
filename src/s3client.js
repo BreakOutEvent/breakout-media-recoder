@@ -1,5 +1,5 @@
 var s3 = require('s3');
-var uuid = require('node-uuid');
+var uuidV4 = require('uuid/v4');
 var path = require('path');
 var config = require('../config.json');
 
@@ -19,7 +19,7 @@ var client = s3.createClient({
 var uploadFile = function (localfile) {
     return new Promise(function (resolve, reject) {
 
-        var remotename = uuid.v4() + path.parse(localfile).ext;
+        var remotename = uuidV4() + path.parse(localfile).ext;
         var url = `https://s3-${config.s3.region}.amazonaws.com/${config.s3.bucketName}/${remotename}`;
         var params = {
             localFile: localfile,
