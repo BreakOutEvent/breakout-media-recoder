@@ -77,7 +77,7 @@ var audioDecode = function (id, file, type) {
 
                 if (size.bitrate == maxbitrate) {
                     audioWaveform(output).then(function (file) {
-                        postprocess(id, file, 'image', {name: 'waveform'});
+                        postprocess(id, file, 'image', { name: 'waveform' });
                     });
                 }
 
@@ -115,10 +115,12 @@ var videoDecode = function (id, file, type) {
 
                         if (size.videocodec === "libx264") {
                             output = `${config.mediafolder}done/${type.typename}/${size.name}/${path.parse(file).name}.mp4`;
-                            decoder = ffmpeg(file).videoCodec(size.videocodec).size(`${size.side}x?`).audioCodec(size.audiocodec).audioBitrate(size.audiobitrate).audioChannels(2).audioFrequency(44100).videoBitrate(size.videobitrate).outputOptions(['-cpu-used 2', '-threads 2', '-profile:v high', '-level 4.2']).output(output);
+                            decoder = ffmpeg(file).videoCodec(size.videocodec).size(`${size.side}x?`)
+                                .audioCodec(size.audiocodec).audioBitrate(size.audiobitrate).audioChannels(2).audioFrequency(44100).videoBitrate(size.videobitrate).outputOptions(['-cpu-used 2', '-threads 2', '-profile:v high', '-level 4.2', '-pix_fmt yuv420p']).output(output);
                         } else {
                             output = `${config.mediafolder}done/${type.typename}/${size.name}/${path.parse(file).name}.webm`;
-                            decoder = ffmpeg(file).videoCodec(size.videocodec).size(`${size.side}x?`).audioCodec(size.audiocodec).audioBitrate(size.audiobitrate).audioChannels(2).audioFrequency(44100).videoBitrate(size.videobitrate).outputOptions(['-cpu-used 2', '-threads 2', '-deadline good']).output(output);
+                            decoder = ffmpeg(file).videoCodec(size.videocodec).size(`${size.side}x?`).audioCodec(size.audiocodec).audioBitrate(size.audiobitrate)
+                                .audioChannels(2).audioFrequency(44100).videoBitrate(size.videobitrate).outputOptions(['-cpu-used 2', '-threads 2', '-deadline good', '-g 20']).output(output);
                         }
 
                         var hadprogress = 0;
